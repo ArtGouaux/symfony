@@ -1,23 +1,28 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Catégorie
-	{{ category.name }}
-{% endblock %}
-
+{% extends "base.html.twig" %}
+{% block title %} Catégorie {{ categoryName }}{% endblock %}
 {% block body %}
-	<div class="media">
-		<div class="media-body">
-			{% for program in programs %}
-				<div>
-					<h2>{{ loop.index }} / # {{ program.id }}
-						<a href="{{ path("program_show", { id: program.id }) }}">{{ program.title }}</a>
-					</h2>
-					<p>{{ program.summary }}</p>
-				</div>
-			</div>
-		</div>
-	{% endfor %}
-	<a href="{{ path('category_index') }}">
-		Retour à la liste des catégories
-	</a>
+<h1 class="text-center">Liste de la catégorie {{ categoryName }} : </h1>
+<main class="container">
+    <div class="row justify-content-center gap-5">
+        {% for program in programs %}
+        <div class="card bg-light mb-3 mb-5 p-0">
+            <div class="card">
+                <img class="card-img-top" src="{{program.poster}}" alt="{{ program.title }} poster">
+                <div class="card-header">
+                    <h2>Résumé :</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ program.title }} </h3>
+                    <p>{{ program.summary }}</p>
+                    <a href="{{ path('program_show', { id: program.id }) }}" class="btn btn-secondary p-2 px-4">
+                        Voir le détail</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        Aucune catégorie trouvée.
+        {% endfor %}
+        <a class="text-dark" href="{{ path('category_index') }}">Retour à la liste de la catégorie</a>
+    </div>
+</main>
 {% endblock %}

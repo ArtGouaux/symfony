@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
@@ -18,7 +17,6 @@ class Category
      * @ORM\Column(type="integer")
      */
     private $id;
-
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -27,19 +25,21 @@ class Category
     /**
      * @ORM\OneToMany(targetEntity=Program::class, mappedBy="category")
      */
-
     private $programs;
+
+    public function __construct()
+    {
+        $this->programs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
     public function getName(): ?string
     {
         return $this->name;
     }
-
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -47,15 +47,9 @@ class Category
         return $this;
     }
 
-    public function __construct()
-    {
-        $this->programs = new ArrayCollection();
-    }
-
     /**
      * @return Collection|Program[]
      */
-
     public function getPrograms(): Collection
     {
         return $this->programs;
@@ -65,14 +59,13 @@ class Category
      * @param Program $program
      * @return Category
      */
-
     public function addProgram(Program $program): self
     {
         if (!$this->programs->contains($program)) {
             $this->programs[] = $program;
-
             $program->setCategory($this);
         }
+
         return $this;
     }
 
@@ -80,7 +73,6 @@ class Category
      * @param Program $program
      * @return Category
      */
-
     public function removeProgram(Program $program): self
     {
         if ($this->programs->removeElement($program)) {

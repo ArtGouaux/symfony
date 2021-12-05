@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\SeasonRepository;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=SeasonRepository::class)
@@ -20,18 +20,12 @@ class Season
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Program::class, inversedBy="seasons")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $program_id;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $number;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $year;
 
@@ -40,21 +34,25 @@ class Season
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Program::class, inversedBy="seasons")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $program;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Episode::class, mappedBy="season", orphanRemoval=true)
+     */
+    private $episodes;
+
+    public function __construct()
+    {
+        $this->episodes = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getProgramId(): ?int
-    {
-        return $this->program_id;
-    }
-
-    public function setProgramId(int $program_id): self
-    {
-        $this->program_id = $program_id;
-
-        return $this;
     }
 
     public function getNumber(): ?int
@@ -74,7 +72,7 @@ class Season
         return $this->year;
     }
 
-    public function setYear(int $year): self
+    public function setYear(?int $year): self
     {
         $this->year = $year;
 
@@ -91,16 +89,6 @@ class Season
         $this->description = $description;
 
         return $this;
-    }
-
-    /**
-     * @ORM\OneToMany(targetEntity=Episode::class, mappedBy="season", orphanRemoval=true)
-     */
-    private $episodes;
-
-    public function __construct()
-    {
-        $this->episodes = new ArrayCollection();
     }
 
     public function getProgram(): ?Program
@@ -129,7 +117,6 @@ class Season
             $this->episodes[] = $episode;
             $episode->setSeason($this);
         }
-
         return $this;
     }
 
@@ -141,8 +128,6 @@ class Season
                 $episode->setSeason(null);
             }
         }
-
         return $this;
     }
-
 }

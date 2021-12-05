@@ -1,30 +1,31 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Série #{{ program.id }}
-{% endblock %}
-
+{% block title %}Série #{{ program.id }}{% endblock %}
 {% block body %}
-	<div class="media">
-		<img class="align-self-start mr-3" src="{{program.poster}}" alt="{{ program.title }} poster">
-		<div class="media-body">
-			<h1 class="mt-0">{{ program.title }}</h1>
-			<p>{{ program.summary }}</p>
-			<p>Catégorie :
-				{{ program.category.name }}</p>
-			{% for season in seasons %}
-				<h1 class="mt-0">Saison :{{ season.number }}</h1>
-				<p>Année :{{ season.year }}</p>
-				<p>Description :
-					{{season.description }}</p>
-				<a href="{{ path('program_season_show',{programId: season.program.id, seasonId: season.id }) }}">Voir la
-					            fiche</a>
-			{% else %}
-				Pas de saison disponible.
-			{% endfor %}
-		</div>
-	</div>
-
-	<a href="{{ path('program_index') }}">
-		Retour à la liste des programmes
-	</a>
+<h1 class="text-center">Liste des saisons de la série {{ program.title }} : </h1>
+<main class="container">
+    <img class="align-self-start mr-3" src="{{program.poster}}" alt="{{ program.title }} poster">
+    <h2 class="mt-0">{{ program.title }}</h2>
+    <p>Catégorie : {{ program.category.name }}</p>
+    <p>{{ program.summary }}</p>
+    <div class="row justify-content-center gap-5">
+        {% for season in seasons %}
+        <div class="card bg-light mb-3 mb-5 p-0">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mt-0">{{ season.description }}</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ season.year }}</h3>    
+                    <a href="{{ path('program_season_show',{programId: season.program.id, seasonId: season.id }) }}"
+                        class="btn btn-secondary p-2 px-4">
+                        Voir le détail</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        Pas de saison disponible.
+        {% endfor %}
+        <a class="text-dark" href="{{ path('program_index') }}">Retour à la liste des programmes</a>
+    </div>
+</main>
 {% endblock %}
