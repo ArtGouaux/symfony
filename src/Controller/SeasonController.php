@@ -20,7 +20,7 @@ class SeasonController extends AbstractController
      * @Route("/", name="season_index", methods={"GET"})
      */
     public function index(SeasonRepository $seasonRepository): Response
-    {
+    { 
         return $this->render('season/index.html.twig', [
             'seasons' => $seasonRepository->findAll(),
         ]);

@@ -1,10 +1,13 @@
 <?php
+
 namespace App\Entity;
 
-use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
@@ -19,19 +22,15 @@ class Category
     private $id;
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Merci de remplir ce champ")
+     * @Assert\Length(max="255", maxMessage="Titre trop long, il ne devrait pas dépasser {{ limit }} caractères")
      */
     private $name;
-
     /**
+     *  @Assert\NotBlank()
      * @ORM\OneToMany(targetEntity=Program::class, mappedBy="category")
      */
     private $programs;
-
-    public function __construct()
-    {
-        $this->programs = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -43,10 +42,12 @@ class Category
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
-
+    public function __construct()
+    {
+        $this->programs = new ArrayCollection();
+    }
     /**
      * @return Collection|Program[]
      */
@@ -54,7 +55,6 @@ class Category
     {
         return $this->programs;
     }
-
     /**
      * @param Program $program
      * @return Category
@@ -65,10 +65,8 @@ class Category
             $this->programs[] = $program;
             $program->setCategory($this);
         }
-
         return $this;
     }
-
     /**
      * @param Program $program
      * @return Category
