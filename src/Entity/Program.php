@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProgramRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ProgramRepository::class)
- * @UniqueEntity(fields="title", message="Ce titre existe déjà.")
+ * @UniqueEntity(fields="title", message="ce titre existe déjà.")
  */
 class Program
 {
@@ -21,16 +21,20 @@ class Program
      * @ORM\Column(type="integer")
      */
     private $id;
-
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="Merci de remplir ce champ")
-     * @Assert\Length(max="255", maxMessage="Titre trop long, il ne devrait pas dépasser {{ limit }} caractères")
+     * @Assert\NotBlank()
+     * @Assert\Length(max="255")
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     */
+    private $summary;
+
+    /**
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      * @Assert\Regex(
      *     pattern="/plus belle la vie/",
@@ -38,12 +42,8 @@ class Program
      *     message="On parle de vraies séries ici")
      * 
      */
-    private $summary;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $poster;
+
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="programs")
      * @ORM\JoinColumn(nullable=false)
@@ -53,11 +53,9 @@ class Program
      * @ORM\OneToMany(targetEntity=Season::class, mappedBy="program", orphanRemoval=true)
      */
     private $seasons;
-
     /**
      * @ORM\Column(type="integer")
      */
-
     private $year;
 
     /**
@@ -65,11 +63,13 @@ class Program
      */
     private $actors;
 
+
     public function __construct()
     {
         $this->seasons = new ArrayCollection();
         $this->actors = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -91,30 +91,25 @@ class Program
     public function setSummary(string $summary): self
     {
         $this->summary = $summary;
-
         return $this;
     }
-
     public function getPoster(): ?string
     {
         return $this->poster;
     }
-
     public function setPoster(string $poster): self
     {
         $this->poster = $poster;
-
         return $this;
     }
-
     public function getCategory(): ?Category
     {
         return $this->category;
     }
-
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
         return $this;
     }
 
@@ -125,13 +120,13 @@ class Program
     {
         return $this->seasons;
     }
-
     public function addSeason(Season $season): self
     {
         if (!$this->seasons->contains($season)) {
             $this->seasons[] = $season;
             $season->setProgram($this);
         }
+
         return $this;
     }
 
@@ -143,6 +138,7 @@ class Program
                 $season->setProgram(null);
             }
         }
+
         return $this;
     }
 
@@ -150,10 +146,10 @@ class Program
     {
         return $this->year;
     }
-
     public function setYear(int $year): self
     {
         $this->year = $year;
+
         return $this;
     }
 
@@ -165,22 +161,17 @@ class Program
         return $this->actors;
     }
 
-    public function addActor(Actor $actor): self
+    public function addActor(Actor $actor)
     {
-        if (!$this->actors->contains($actor)) {
-            $this->actors[] = $actor;
-            $actor->addProgram($this);
-        }
 
-        return $this;
+        if ($this->actors->contains($actor)) {
+            return;
+        }
+        $this->actors[] = $actor;
     }
 
-    public function removeActor(Actor $actor): self
+    public function removeActor(Actor $actor)
     {
-        if ($this->actors->removeElement($actor)) {
-            $actor->removeProgram($this);
-        }
-
-        return $this;
+        $this->actors->removeElement($actor);
     }
 }
